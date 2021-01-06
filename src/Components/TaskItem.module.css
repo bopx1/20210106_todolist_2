@@ -1,0 +1,13 @@
+.button {
+    appearance:none;
+    -webkit-appearance:none;
+    background:transparent;
+    border:none;
+    outline:none;
+    background-image:url('http://i.stack.imgur.com/gojXZ.jpg');
+    background-size:40px 34px;
+    background-position: 18px 5px;
+    padding:22px 38px;
+    background-repeat:no-repeat;
+    cursor:pointer;
+}

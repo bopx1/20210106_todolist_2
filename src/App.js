@@ -1,23 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+import logo from "./logo.svg";
+import "./App.css";
+import Header from "./Components/Header";
+import TaskList from "./Components/TaskList";
+import Footer from "./Components/Footer";
+import { useState } from "react";
+import Button from "./Components/Button";
 
 function App() {
+  let [taskList, setTaskList] = useState([]);
+  let [newTask, setNewTask] = useState('');
+  const onAddTaskClick = () => {
+    let newTaskList = [
+      ...taskList,
+      {
+        description: newTask,
+        bookmark: false,
+      },
+    ];
+    setTaskList(newTaskList);
+    setNewTask('');
+  };
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Header />
+      <TaskList taskList={taskList} />
+      <Footer onAddTaskClick={onAddTaskClick} newTask={newTask} setNewTask={setNewTask} />
     </div>
   );
 }
