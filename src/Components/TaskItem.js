@@ -1,10 +1,34 @@
-import classes from './TaskItem.module.css';
+import { StarOutlined, StarFilled } from "@ant-design/icons";
 
-const TaskItem = ({ description, bookmark }) => {
+const TaskItem = ({ task, onCompletedChange, onFavoritedChange }) => {
   return (
-    <div>
-      <p>{description}</p>
-      <button className={classes.button + bookmark ? 'bookmark' : 'unbookmark'} style={{width: '20px'}}/>
+    <div className="wrapItem">
+      <div>
+        <input
+          type="checkbox"
+          className="a"
+          checked={task.completed}
+          onChange={(event) => onCompletedChange(task.id, event.target.checked)}
+        />
+        <label>{task.title}</label>
+      </div>
+      {!task.isFavorited ? (
+        <StarOutlined
+          style={{ visibility: task.completed ? "hidden" : "visible" }}
+          onClick={(event) => {
+            event.preventDefault();
+            onFavoritedChange(task.id, true);
+          }}
+        />
+      ) : (
+        <StarFilled
+          style={{ visibility: task.completed ? "hidden" : "visible" }}
+          onClick={(event) => {
+            event.preventDefault();
+            onFavoritedChange(task.id, false);
+          }}
+        />
+      )}
     </div>
   );
 };

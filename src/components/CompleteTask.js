@@ -1,23 +1,18 @@
-import classes from "./TaskList.module.css";
 import React from "react";
 import TaskItem from "./TaskItem";
 
-function TaskList({ taskList, onCompletedChange, onFavoritedChange }) {
+function CompleteTask({ taskList, onCompletedChange }) {
   return (
     <section className="listTask">
       <div className="totalComplete">
-        <span> Incompleted</span>
+        <span> Completed</span>
         <span> {taskList.length}</span>
       </div>
       <ul>
         {taskList.map((task) => {
           return (
             <li>
-              <TaskItem
-                task={task}
-                onCompletedChange={onCompletedChange}
-                onFavoritedChange={onFavoritedChange}
-              />
+              <TaskItem task={task} onCompletedChange={onCompletedChange} />
             </li>
           );
         })}
@@ -26,4 +21,4 @@ function TaskList({ taskList, onCompletedChange, onFavoritedChange }) {
   );
 }
 
-export default TaskList;
+export default CompleteTask;
