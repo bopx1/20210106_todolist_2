@@ -1,22 +1,26 @@
-import classes from "./TaskList.module.css";
 import React from "react";
 import TaskItem from "./TaskItem";
 
-function TaskList({ taskList, onCompletedChange, onFavoritedChange }) {
+function TaskList({
+  taskList,
+  taskListName,
+  onCompletedChange,
+  onFavoriteChange,
+}) {
   return (
     <section className="listTask">
       <div className="totalComplete">
-        <span> Incompleted</span>
+        <span> {taskListName}</span>
         <span> {taskList.length}</span>
       </div>
       <ul>
         {taskList.map((task) => {
           return (
-            <li>
+            <li key={task.id}>
               <TaskItem
                 task={task}
                 onCompletedChange={onCompletedChange}
-                onFavoritedChange={onFavoritedChange}
+                onFavoriteChange={onFavoriteChange}
               />
             </li>
           );

@@ -1,31 +1,29 @@
 import { StarOutlined, StarFilled } from "@ant-design/icons";
 
-const TaskItem = ({ task, onCompletedChange, onFavoritedChange }) => {
+const TaskItem = ({ task, onCompletedChange, onFavoriteChange }) => {
   return (
     <div className="wrapItem">
       <div>
         <input
           type="checkbox"
           className="a"
-          checked={task.completed}
+          checked={task.isCompleted}
           onChange={(event) => onCompletedChange(task.id, event.target.checked)}
         />
-        <label>{task.title}</label>
+        <label>{task.taskName}</label>
       </div>
-      {!task.isFavorited ? (
+      {!task.isFavorite ? (
         <StarOutlined
-          style={{ visibility: task.completed ? "hidden" : "visible" }}
-          onClick={(event) => {
-            event.preventDefault();
-            onFavoritedChange(task.id, true);
+          style={{ visibility: task.isCompleted ? "hidden" : "visible" }}
+          onClick={() => {
+            onFavoriteChange(task.id, true);
           }}
         />
       ) : (
         <StarFilled
-          style={{ visibility: task.completed ? "hidden" : "visible" }}
-          onClick={(event) => {
-            event.preventDefault();
-            onFavoritedChange(task.id, false);
+          style={{ visibility: task.isCompleted ? "hidden" : "visible" }}
+          onClick={() => {
+            onFavoriteChange(task.id, false);
           }}
         />
       )}

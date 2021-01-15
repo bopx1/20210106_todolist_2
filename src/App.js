@@ -1,23 +1,31 @@
 import { useState, useEffect } from "react";
 import "./App.css";
-import CompleteTask from "./components/CompleteTask";
 import Header from "./components/Header";
-import TaskList from "./components/TaskList";
 import uuid from "react-uuid";
-import { GetToDoDetail, GetToDoList } from "./TodoService";
+import { GetToDoDetail, GetToDoList, AddTodo, ChangeTaskCompleted, ChangeTaskFavorite } from "./services/TodoService";
+import TaskListCompleted from "./components/TaskListCompleted";
+import TaskListIncompleted from "./components/TaskListIncompleted";
+import _ from "lodash";
 
 function App() {
   let [isLoading, setIsLoading] = useState(true);
+  let [isLoadingAddTodo, setIsLoadingAddTodo] = useState(false);
+  let [isLoadingChangeTaskCompleted, setIsLoadingChangeTaskCompleted] = useState(false);
+  let [isLoadingChangeTaskFavorite, setIsLoadingChangeTaskFavorite] = useState(false);
   let [isError, setIsError] = useState(false);
+  let [isErrorAddTodo, setIsErrorAddTodo] = useState(false);
+  let [isErrorChangeTaskCompleted, setIsErrorChangeTaskCompleted] = useState(false);
+  let [isErrorChangeTaskFavorite, setIsErrorChangeTaskFavorite] = useState(false);
   let [reloadCount, setReloadCount] = useState(0);
   let [taskList, setTaskList] = useState([]);
-  let [newTask, setNewTask] = useState("");
-
+  let [completedTaskList, incompletedTaskList] = _.partition(
+    taskList,
+    (t) => t.isCompleted
+  );
   useEffect(async () => {
     try {
       const response = await GetToDoList();
-      const detailReponse = await GetToDoDetail(response.data[0].id);
-      setTaskList([detailReponse.data]);
+      setTaskList(response.data);
     } catch (ex) {
       console.log(ex);
       setIsError(true);
@@ -26,77 +34,47 @@ function App() {
     }
   }, [reloadCount]);
 
-  const getCompletedTaskList = () => {
-    return taskList
-      .filter((task) => {
-        return task.completed;
-      })
-      .sort((t1, t2) => {
-        return t1.completedDate - t2.completedDate;
-      });
-  };
-
-  const getIncompletedTaskList = () => {
-    return taskList
-      .filter((task) => {
-        return !task.completed;
-      }).sort((t1, t2) => {
-        return t1.createdDate - t2.createdDate;
-      })
-      .sort((t1, t2) => {
-        if (t1.isFavorited && !t2.isFavorited) return -1;
-        if (!t1.isFavorited && t2.isFavorited) return 1;
-        return 0;
-      });
-  };
-
-  const onAddTaskClick = () => {
+  const handleAddTask = async (newTask) => {
     if (!newTask) return;
-    let newTaskList = [
-      ...taskList,
-      {
-        id: uuid(),
-        completed: false,
-        isFavorited: false,
-        title: newTask,
-        createdDate: new Date().getTime(),
-        completedDate: new Date(1900, 1, 1),
-      },
-    ];
-    setTaskList(newTaskList);
-    setNewTask("");
+    try {
+      setIsErrorAddTodo(false);
+      setIsLoadingAddTodo(true);
+      await AddTodo(newTask);
+      setReloadCount(reloadCount + 1);
+    } catch (ex) {
+      console.log(ex);
+      setIsErrorAddTodo(true);
+    } finally {
+      setIsLoadingAddTodo(false);
+    }
   };
 
-  const onCompletedChange = (id, completed) => {
-    let newTaskList = taskList.map((task) => {
-      if (task.id === id) {
-        let newTask = {
-          ...task,
-          completed: completed,
-          completedDate: completed
-            ? new Date().getTime()
-            : new Date(1900, 1, 1),
-        };
-        return newTask;
-      }
-      return task;
-    });
-    setTaskList(newTaskList);
+  const handleCompletedChange = async (id, isCompleted) => {
+    try {
+      setIsErrorChangeTaskCompleted(false);
+      setIsLoadingChangeTaskCompleted(true);
+      await ChangeTaskCompleted(id, isCompleted);
+      setReloadCount(reloadCount + 1);
+    } catch (ex) {
+      console.log(ex);
+      setIsErrorChangeTaskCompleted(true);
+    } finally {
+      setIsLoadingChangeTaskCompleted(false);
+    }
   };
 
-  const onFavoritedChange = (id, isFavorited) => {
-    console.log(isFavorited);
-    let newTaskList = taskList.map((task) => {
-      if (task.id === id) {
-        let newTask = {
-          ...task,
-          isFavorited: isFavorited,
-        };
-        return newTask;
-      }
-      return task;
-    });
-    setTaskList(newTaskList);
+  const handleFavoriteChange = async (id, isFavorite) => {
+    try {
+      setIsErrorChangeTaskFavorite(false);
+      setIsLoadingChangeTaskFavorite(true);
+      await ChangeTaskFavorite(id, isFavorite);
+      setReloadCount(reloadCount + 1);
+    } catch (ex) {
+      console.log(ex);
+      setIsErrorChangeTaskFavorite(true);
+    } finally {
+      setIsLoadingChangeTaskFavorite(false);
+    }
   };
 
   const renderErrorContent = () => {
@@ -121,19 +99,15 @@ function App() {
       "Loading"
     ) : (
       <div>
-        <Header
-          onAddTaskClick={onAddTaskClick}
-          newTask={newTask}
-          setNewTask={setNewTask}
+        <Header onAddTask={handleAddTask} />
+        <TaskListIncompleted
+          taskList={incompletedTaskList}
+          onCompletedChange={handleCompletedChange}
+          onFavoriteChange={handleFavoriteChange}
         />
-        <TaskList
-          taskList={getIncompletedTaskList()}
-          onCompletedChange={onCompletedChange}
-          onFavoritedChange={onFavoritedChange}
-        />
-        <CompleteTask
-          taskList={getCompletedTaskList()}
-          onCompletedChange={onCompletedChange}
+        <TaskListCompleted
+          taskList={completedTaskList}
+          onCompletedChange={handleCompletedChange}
         />
       </div>
     );

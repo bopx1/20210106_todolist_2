@@ -1,8 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import classes from "./Header.module.css";
 import { Button } from "antd";
 
-function Header({ onAddTaskClick, newTask, setNewTask }) {
+function Header({ onAddTask }) {
+  const [newTask, setNewTask] = useState("");
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      onAddTask(newTask);
+      setNewTask("");
+    }
+  };
   return (
     <header className={classes.heading}>
       <h1>Tasks</h1>
@@ -12,8 +19,14 @@ function Header({ onAddTaskClick, newTask, setNewTask }) {
           value={newTask}
           onChange={(e) => setNewTask(e.target.value)}
           placeholder="Add a task"
+          onKeyDown={handleKeyDown}
         />
-        <Button Type="primary" Shape="round" onClick={onAddTaskClick}>
+        <Button
+          onClick={() => {
+            onAddTask(newTask);
+            setNewTask("");
+          }}
+        >
           Add task
         </Button>
       </div>
