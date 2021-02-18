@@ -8,7 +8,6 @@ function TaskListCompleted({ taskList, onCompletedChange }) {
     ["completedDate"],
     ["asc"]
   );
-  console.log(sortedTaskListCompleted);
   return (
     <TaskList
       taskList={sortedTaskListCompleted}

@@ -1,15 +1,11 @@
 import { StarOutlined, StarFilled } from "@ant-design/icons";
+import { Checkbox } from "antd";
 
 const TaskItem = ({ task, onCompletedChange, onFavoriteChange }) => {
   return (
     <div className="wrapItem">
       <div>
-        <input
-          type="checkbox"
-          className="a"
-          checked={task.isCompleted}
-          onChange={(event) => onCompletedChange(task.id, event.target.checked)}
-        />
+        <Checkbox checked={task.isCompleted} onChange={(event) => onCompletedChange(task.id, event.target.checked)} />
         <label>{task.taskName}</label>
       </div>
       {!task.isFavorite ? (

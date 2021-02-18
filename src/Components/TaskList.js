@@ -9,10 +9,10 @@ function TaskList({
 }) {
   return (
     <section className="listTask">
-      <div className="totalComplete">
+      {/* <div className="totalComplete">
         <span> {taskListName}</span>
         <span> {taskList.length}</span>
-      </div>
+      </div> */}
       <ul>
         {taskList.map((task) => {
           return (
